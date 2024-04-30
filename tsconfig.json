@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "es2018", // Atualizado para melhor suporte a async/await
+    "module": "commonjs",
+    "lib": ["esnext", "dom"], // Atualizado para incluir 'esnext'
+    "allowJs": true,
+    "outDir": "build",
+    "rootDir": "src",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictPropertyInitialization": false,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "typeRoots": ["./node_modules/@types", "./src/@types"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node", // Garante a resolução de módulos no estilo Node.js
+    "removeComments": true, // Opcional: remove comentários no código gerado
+    "sourceMap": true // Opcional: gera mapas de código fonte para depuração
+  },
+  "include": ["src/**/*", "src/config/swagger.ts"], // Inclui todos os arquivos dentro da pasta src
+  "exclude": ["node_modules", "build"] // Exclui a pasta node_modules e build dos processos de compilação
+}
