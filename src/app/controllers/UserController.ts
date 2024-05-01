@@ -39,7 +39,7 @@ export async function updatePassword(req: Request, res: Response) {
         const hashedPassword = await bcrypt.hash(newPassword, salt);
 
         // Atualize a senha do usuário no banco de dados
-        await userService.updateUserPassword(userId, currentPassword, hashedPassword);
+        await userService.updateUserPassword(userId, hashedPassword);
 
         return res.status(200).json({ message: 'Senha atualizada com sucesso' });
     } catch (error) {
@@ -47,4 +47,3 @@ export async function updatePassword(req: Request, res: Response) {
         return res.status(500).json({ message: 'Erro ao atualizar senha' });
     }
 }
-

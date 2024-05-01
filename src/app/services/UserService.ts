@@ -35,17 +35,12 @@ export class UserService {
         return user || undefined;
     }
     
-    async updateUserPassword(userId: number, currentPassword: string, newPassword: string): Promise<boolean> {
+    async updateUserPassword(userId: number, newPassword: string): Promise<boolean> {
         const userRepository = AppDataSource.getRepository(User);
         const user = await userRepository.findOne({ where: { id: userId } });
 
         if (!user) {
             throw new Error('Usuário não encontrado');
-        }
-
-        const isPasswordCorrect = await bcrypt.compare(currentPassword, user.password);
-        if (!isPasswordCorrect) {
-            throw new Error('Senha atual incorreta');
         }
 
         const salt = await bcrypt.genSalt(10);

@@ -6,20 +6,35 @@ import { CreateUsersAndRefreshTokens1714277035290 } from "./migrations/171427703
 // Carrega variáveis de ambiente
 import 'dotenv/config';
 import { RefreshToken } from "../app/entities/RefreshToken";
+import { CreateClientsTable1714526519895 } from "./migrations/1714526519895-CreateClientsTable";
+import { Client } from "../app/entities/Clients";
+import { CreateIntegrationsTable1714527583264 } from "./migrations/1714527583264-CreateIntegrationsTable";
+import { Integra } from "../app/entities/Integration";
+import { CreateProductsTable1714529113119 } from "./migrations/1714529113119-CreateProductsTable";
+import { Product } from "../app/entities/Products";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
   host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT) || 3306, // Se DB_PORT não for definido, usa 3306 como padrão
+  port: Number(process.env.DB_PORT) || 3306,
   username: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_DATABASE,
-  synchronize: process.env.TYPEORM_SYNCHRONIZE === 'false', // Usar strings 'true'/'false' e converter
+  synchronize: process.env.TYPEORM_SYNCHRONIZE === 'true',
   dropSchema: false,
   logging: true,
-  entities: [User, RefreshToken],
+  entities: [
+    User, 
+    RefreshToken, 
+    Client, 
+    Integra,
+    Product
+  ],
   migrations: [
-    CreateUsersAndRefreshTokens1714277035290
+    CreateUsersAndRefreshTokens1714277035290, //Tabela Usuários do Sistema
+    CreateClientsTable1714526519895, //Tabela Mentorados
+    CreateIntegrationsTable1714527583264, //Tabela de Integrações (Pagarme, Asaas)
+    CreateProductsTable1714529113119, //Tabela de Produtos (Mentoria de 6 meses, Mentoria de 1 ano)
   ],
   subscribers: [],
 });
