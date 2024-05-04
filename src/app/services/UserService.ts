@@ -54,7 +54,7 @@ export class UserService {
 
     async generateToken(user: User): Promise<{ accessToken: string, refreshToken: string }> {
         const accessToken = jwt.sign(
-            { userId: user.id, email: user.email },
+            { userId: user.id, name: user.name, email: user.email },
             process.env.ACCESS_TOKEN_SECRET!,
             { expiresIn: process.env.ACCESS_TOKEN_LIFETIME } // Time expire AcessToken
         );
@@ -71,7 +71,7 @@ export class UserService {
         const refreshToken = new RefreshToken();
         refreshToken.user = user;
         refreshToken.token = jwt.sign(
-            { userId: user.id, email: user.email },
+            { userId: user.id, name: user.name, email: user.email },
             process.env.REFRESH_TOKEN_SECRET!,
             { expiresIn: refreshTokenDuration }
         );

@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  const privateRoutes = ['/dashboard', '/update-password', '/settings'];
+  const privateRoutes = ['/dashboard', '/update-password', '/settings', '/me'];
 
   if (!privateRoutes.includes(req.path)) {
     return next();

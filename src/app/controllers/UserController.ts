@@ -47,3 +47,15 @@ export async function updatePassword(req: Request, res: Response) {
         return res.status(500).json({ message: 'Erro ao atualizar senha' });
     }
 }
+
+export async function getUserInfo(req: Request, res: Response){
+    try {
+        // Assuming you are using JWT middleware to decode the token and attach it to req.user
+        const user = req.user;
+
+        return res.status(200).json(user);
+    } catch (error) {
+        console.error('Error getting user information:', error);
+        return res.status(500).json({ message: 'Unexpected error while fetching user information.' });
+    }
+}
