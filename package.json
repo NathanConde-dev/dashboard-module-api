@@ -10,8 +10,8 @@
     "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "typeorm:migrate": "ts-node ./node_modules/typeorm/cli.js migration:run",
-    "typeorm:migration-create": "ts-node ./node_modules/typeorm/cli.js migration:create",
-    "postinstall": "npm run build && npm run typeorm:migrate"
+    "install:prod": "npm install --omit=dev",
+    "postinstall": "npm run build && npm run typeorm -- -d ./src/database/data-source.ts migration:run"
   },
   "keywords": [],
   "author": "",
