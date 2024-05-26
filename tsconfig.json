@@ -1,25 +1,25 @@
 {
   "compilerOptions": {
-    "target": "es2018", // Atualizado para melhor suporte a async/await
-    "module": "commonjs",
-    "lib": ["esnext", "dom"], // Atualizado para incluir 'esnext'
-    "allowJs": true,
-    "outDir": "build",
-    "rootDir": "src",
-    "strict": true,
-    "noImplicitAny": true,
-    "strictPropertyInitialization": false,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "typeRoots": ["./node_modules/@types", "./src/@types"],
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node", // Garante a resolução de módulos no estilo Node.js
-    "removeComments": true, // Opcional: remove comentários no código gerado
-    "sourceMap": true // Opcional: gera mapas de código fonte para depuração
+    "target": "esnext", // Define como o código JS será gerado, 'esnext' para a versão mais recente do ECMAScript
+    "module": "commonjs", // Sistema de módulos a ser usado, 'commonjs' é ideal para Node.js
+    "lib": ["esnext", "dom"], // Bibliotecas padrão a serem incluídas no processo de compilação
+    "allowJs": true, // Permite a compilação de arquivos JS junto com TS
+    "outDir": "build", // Diretório para os arquivos de saída da compilação
+    "rootDir": "src", // Diretório raiz que contém os arquivos a serem compilados
+    "strict": true, // Habilita todas as opções estritas de tipo
+    "noImplicitAny": true, // Garante que todos os tipos 'any' sejam explicitamente declarados
+    "strictPropertyInitialization": false, // Desabilita a inicialização estrita de propriedades
+    "esModuleInterop": true, // Permite a interoperabilidade padrão de módulos ES com módulos CommonJS
+    "resolveJsonModule": true, // Permite importação de arquivos .json
+    "typeRoots": ["./node_modules/@types", "./src/@types"], // Define onde procurar por definições de tipo
+    "experimentalDecorators": true, // Permite o uso de decoradores, que são usados por bibliotecas como TypeORM
+    "emitDecoratorMetadata": true, // Emite informações de tipo para decoradores, necessário para o TypeORM
+    "skipLibCheck": true, // Pula a verificação de tipos em declarações de bibliotecas
+    "forceConsistentCasingInFileNames": true, // Força consistência no uso de maiúsculas e minúsculas nos nomes de arquivos
+    "moduleResolution": "node", // Define o algoritmo de resolução de módulos, 'node' para Node.js
+    "removeComments": true, // Remove comentários no código gerado para reduzir o tamanho do arquivo
+    "sourceMap": true // Gera arquivos de mapa de código fonte para facilitar a depuração
   },
-  "include": ["src/**/*", "src/config/swagger.ts"], // Inclui todos os arquivos dentro da pasta src
-  "exclude": ["node_modules", "build"] // Exclui a pasta node_modules e build dos processos de compilação
+  "include": ["src/**/*"], // Inclui todos os arquivos TypeScript da pasta src e subpastas para compilação
+  "exclude": ["node_modules", "build"] // Exclui os diretórios node_modules e build do processo de compilação
 }

@@ -15,6 +15,12 @@ export class User {
     @Column()
     password: string;
 
+    @Column({ type: 'varchar', nullable: true })
+    resetPasswordToken: string | null;
+
+    @Column({ type: 'timestamp', nullable: true })
+    resetPasswordExpires: Date | null;
+
     @OneToMany(() => RefreshToken, refreshToken => refreshToken.user)
     refreshTokens: RefreshToken[];
 }

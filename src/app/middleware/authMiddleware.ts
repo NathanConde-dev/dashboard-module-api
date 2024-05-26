@@ -1,8 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
-export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  const privateRoutes = ['/dashboard', '/update-password', '/settings', '/me'];
+interface AuthenticatedRequest extends Request {
+  user?: any; // Defina o tipo da propriedade 'user' aqui conforme necessário
+}
+
+export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  const privateRoutes = ['/update-info','/update-password', '/settings', '/me'];
 
   if (!privateRoutes.includes(req.path)) {
     return next();

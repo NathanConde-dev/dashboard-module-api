@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table } from "typeorm";
+import { MigrationInterface, QueryRunner, Table, TableForeignKey } from "typeorm";
 
 export class CreateUsersAndRefreshTokens1714277035290 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
@@ -30,6 +30,16 @@ export class CreateUsersAndRefreshTokens1714277035290 implements MigrationInterf
                         isNullable: false,
                     },
                     {
+                        name: 'resetPasswordToken',
+                        type: 'varchar',
+                        isNullable: true,
+                    },
+                    {
+                        name: 'resetPasswordExpires',
+                        type: 'timestamp',
+                        isNullable: true,
+                    },
+                    {
                         name: 'createdAt',
                         type: 'timestamp',
                         default: 'CURRENT_TIMESTAMP',
@@ -38,9 +48,9 @@ export class CreateUsersAndRefreshTokens1714277035290 implements MigrationInterf
                         name: 'updatedAt',
                         type: 'timestamp',
                         default: 'CURRENT_TIMESTAMP',
-                        onUpdate: 'CURRENT_TIMESTAMP'
-                    }
-                ]
+                        onUpdate: 'CURRENT_TIMESTAMP',
+                    },
+                ],
             }),
             true
         );
@@ -80,19 +90,21 @@ export class CreateUsersAndRefreshTokens1714277035290 implements MigrationInterf
                         name: 'updatedAt',
                         type: 'timestamp',
                         default: 'CURRENT_TIMESTAMP',
-                        onUpdate: 'CURRENT_TIMESTAMP'
-                    }
+                        onUpdate: 'CURRENT_TIMESTAMP',
+                    },
                 ],
-                foreignKeys: [
-                    {
-                        columnNames: ['userId'],
-                        referencedTableName: 'users',
-                        referencedColumnNames: ['id'],
-                        onDelete: 'CASCADE'
-                    }
-                ]
             }),
             true
+        );
+
+        await queryRunner.createForeignKey(
+            'refresh_tokens',
+            new TableForeignKey({
+                columnNames: ['userId'],
+                referencedColumnNames: ['id'],
+                referencedTableName: 'users',
+                onDelete: 'CASCADE',
+            })
         );
     }
 

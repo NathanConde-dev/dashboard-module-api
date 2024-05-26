@@ -1,14 +1,14 @@
 // src/entities/Client.ts
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('integrations')
-export class Integra {
+@Entity('expenses')
+export class Expense {
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
-    name: string;
+    description: string;
 
     @Column()
-    api_key: string;
+    value: string;
 }

@@ -11,12 +11,17 @@ const app: Express = express();
 
 // Permitir todas as origens
 app.use(cors());
-
 app.use(express.json());
+
 AppDataSource.initialize().then(() => {
+  
+    console.log("Data Source has been initialized and cache cleared!");
+    
     setupSwagger(app);
-    app.use('/', routes); 
+    app.use('/', routes);
+    
     app.listen(3010, () => console.log('Server started on port 3010'));
 }).catch((error: Error) => {
+
     console.error('Error during Data Source initialization:', error);
 });
