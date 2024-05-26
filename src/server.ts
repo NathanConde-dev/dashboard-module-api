@@ -13,6 +13,10 @@ const app: Express = express();
 app.use(cors());
 app.use(express.json());
 
+//Definição da porta pelo Railway
+const PORT = process.env.PORT || 3010;
+
+
 AppDataSource.initialize().then(() => {
   
     console.log("Data Source has been initialized and cache cleared!");
@@ -20,7 +24,7 @@ AppDataSource.initialize().then(() => {
     setupSwagger(app);
     app.use('/', routes);
     
-    app.listen(3010, () => console.log('Server started on port 3010'));
+    app.listen(PORT, () => console.log('Server started'));
 }).catch((error: Error) => {
 
     console.error('Error during Data Source initialization:', error);
