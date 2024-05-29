@@ -8,7 +8,7 @@ import axios from 'axios';
 export const webhookPagarme = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { data } = req.body;
-    const { customer, charges, items } = data;
+    const { customer, charges, items, order } = data;
 
     const clientRepository = AppDataSource.getRepository(Client);
     const paymentRepository = AppDataSource.getRepository(Payment);
@@ -51,8 +51,8 @@ export const webhookPagarme = async (req: Request, res: Response): Promise<Respo
           description: itemDescription,
           payment_method: charge.payment_method,
           status: charge.status,
-          due_date: data.due_date,
-          original_due_date: data.due_date, // Adjust as needed
+          due_date: order ? order.due_date : null, // Adjust as needed
+          original_due_date: order ? order.due_date : null, // Adjust as needed
           payment_date: charge.paid_at,
           client_payment_date: charge.paid_at, // Adjust as needed
           installment_number: charge.last_transaction ? charge.last_transaction.installments : 1,
