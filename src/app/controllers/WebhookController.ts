@@ -4,66 +4,71 @@ import { Client } from '../entities/Clients';
 import { Payment } from '../entities/Payments';
 import axios from 'axios';
 
+
 export const webhookPagarme = async (req: Request, res: Response): Promise<Response> => {
-    try {
-      const { data } = req.body;
-      const { customer, charges } = data;
-  
-      const clientRepository = AppDataSource.getRepository(Client);
-      const paymentRepository = AppDataSource.getRepository(Payment);
-  
-      // Check if the client exists by email
-      let client = await clientRepository.findOneBy({ email: customer.email });
-  
-      // If client does not exist, create a new client
-      if (!client) {
-        client = clientRepository.create({
-          name: customer.name,
-          email: customer.email,
-          cpf: customer.document,
-          phone: customer.phones ? customer.phones.mobile : null,
-        });
-        await clientRepository.save(client);
-      }
-  
-      const clientId = client.id;
-  
-      // Loop through each charge
-      for (const charge of charges) {
-        // Check if the payment exists by id_payment
-        let payment = await paymentRepository.findOneBy({ id_payment: charge.id });
-  
-        // If payment exists, update the payment status
-        if (payment) {
-          payment.status = charge.status;
-        } else {
-          // If payment does not exist, create a new payment
-          payment = paymentRepository.create({
-            id_client: clientId,  // Use the correct field name here
-            platform: 'Pagarme',
-            id_payment: charge.id,
-            value: charge.amount,
-            net_value: charge.amount, // Adjust if you have net value separately
-            description: charge.items ? charge.items[0].description : 'No description',
-            payment_method: charge.payment_method,
-            status: charge.status,
-            due_date: data.due_date,
-            original_due_date: data.due_date, // Adjust as needed
-            payment_date: charge.paid_at,
-            client_payment_date: charge.paid_at, // Adjust as needed
-            installment_number: charge.last_transaction ? charge.last_transaction.installments : 1,
-            invoice_url: charge.invoice_url || '', // Adjust as needed
-          });
-        }
-        await paymentRepository.save(payment);
-      }
-  
-      return res.status(200).send({ message: 'Webhook processed successfully' });
-    } catch (error) {
-      console.error('Error processing webhook:', error);
-      return res.status(500).send({ message: 'Error processing webhook' });
+  try {
+    const { data } = req.body;
+    const { customer, charges, items } = data;
+
+    const clientRepository = AppDataSource.getRepository(Client);
+    const paymentRepository = AppDataSource.getRepository(Payment);
+
+    // Check if the client exists by email
+    let client = await clientRepository.findOneBy({ email: customer.email });
+
+    // If client does not exist, create a new client
+    if (!client) {
+      client = clientRepository.create({
+        name: customer.name,
+        email: customer.email,
+        cpf: customer.document,
+        phone: customer.phones ? customer.phones.mobile : '',
+      });
+      await clientRepository.save(client);
     }
-  };
+
+    const clientId = client.id;
+
+    // Loop through each charge
+    for (const charge of charges) {
+      // Find the description from items
+      const itemDescription = items && items.length > 0 ? items[0].description : 'No description';
+
+      // Check if the payment exists by id_payment
+      let payment = await paymentRepository.findOneBy({ id_payment: charge.id });
+
+      // If payment exists, update the payment status
+      if (payment) {
+        payment.status = charge.status;
+      } else {
+        // If payment does not exist, create a new payment
+        payment = paymentRepository.create({
+          id_client: clientId,  // Use the correct field name here
+          platform: 'Pagarme',
+          id_payment: charge.id,
+          value: charge.amount,
+          net_value: charge.amount, // Adjust if you have net value separately
+          description: itemDescription,
+          payment_method: charge.payment_method,
+          status: charge.status,
+          due_date: data.due_date,
+          original_due_date: data.due_date, // Adjust as needed
+          payment_date: charge.paid_at,
+          client_payment_date: charge.paid_at, // Adjust as needed
+          installment_number: charge.last_transaction ? charge.last_transaction.installments : 1,
+          invoice_url: charge.invoice_url || '', // Adjust as needed
+        });
+      }
+      await paymentRepository.save(payment);
+    }
+
+    return res.status(200).send({ message: 'Webhook processed successfully' });
+  } catch (error) {
+    console.error('Error processing webhook:', error);
+    return res.status(500).send({ message: 'Error processing webhook' });
+  }
+};
+
 
 export const webhookAsaas = async (req: Request, res: Response): Promise<Response> => {
     try {
