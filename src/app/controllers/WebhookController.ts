@@ -22,7 +22,7 @@ export const webhookPagarme = async (req: Request, res: Response): Promise<Respo
         name: customer.name,
         email: customer.email,
         cpf: customer.document,
-        phone: customer.phones && customer.phones.mobile_phone ? customer.phones.mobile_phone.number : '', // Provide default value for phone
+        phone: customer.phones && customer.phones.mobile_phone ? customer.phones.mobile_phone.number : null, // Provide null if phone is not available
       });
       await clientRepository.save(client);
     }
