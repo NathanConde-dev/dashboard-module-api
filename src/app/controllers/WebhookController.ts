@@ -4,7 +4,7 @@ import { Client } from '../entities/Clients';
 import { Payment } from '../entities/Payments';
 import axios from 'axios';
 
-
+// Webhook Pagarme
 export const webhookPagarme = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { data } = req.body;
@@ -22,7 +22,7 @@ export const webhookPagarme = async (req: Request, res: Response): Promise<Respo
         name: customer.name,
         email: customer.email,
         cpf: customer.document,
-        phone: customer.phones ? customer.phones.mobile : '',
+        phone: customer.phones && customer.phones.mobile_phone ? customer.phones.mobile_phone.number : '', // Provide default value for phone
       });
       await clientRepository.save(client);
     }
@@ -65,11 +65,14 @@ export const webhookPagarme = async (req: Request, res: Response): Promise<Respo
     return res.status(200).send({ message: 'Webhook processed successfully' });
   } catch (error) {
     console.error('Error processing webhook:', error);
-    return res.status(500).send({ message: 'Error processing webhook' });
+    if (error instanceof Error) {
+      return res.status(500).send({ message: 'Error processing webhook', error: error.message, stack: error.stack });
+    }
+    return res.status(500).send({ message: 'Unknown error processing webhook' });
   }
 };
 
-
+// Webhook Asaas
 export const webhookAsaas = async (req: Request, res: Response): Promise<Response> => {
     try {
       const { event, payment } = req.body;
