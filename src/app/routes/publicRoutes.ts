@@ -40,11 +40,14 @@ import {
 
 import { sendTestEmail } from '../controllers/EmailController';
 
-
 //Dashboard
 import { getDashboardData } from '../controllers/DashboardController';
 
-
+//Webhooks (Pagarme)
+import { 
+    webhookPagarme,
+    webhookAsaas
+} from '../controllers/WebhookController';
 
 const router = Router();
 const boasVindasController = new BoasVindasController();
@@ -136,5 +139,11 @@ router.post('/fetch-customer-ids-by-name', fetchCustomerIdsByName);
 
 // Definir a rota para buscar transações por e-mail
 router.post('/fetch-transactions', fetchTransactions);
+
+//Rota de webhook da Pagarme
+router.post('/webhook-pagarme', webhookPagarme);
+
+//Rota de webhook do Asaas
+router.post('/webhook-asaas', webhookAsaas);
 
 export default router;
