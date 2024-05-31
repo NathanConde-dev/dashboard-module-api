@@ -19,7 +19,10 @@ export const getDashboardData = async (req: Request, res: Response): Promise<Res
     const relevantPayments = await paymentRepository.find({ where: { status: In(['paid', 'RECEIVED']) } });
 
     // Converter cada net_value de centavos para reais e somar
-    const totalNetValueInReais = relevantPayments.reduce((sum, payment) => sum + parseFloat(payment.net_value as unknown as string) / 100, 0);
+    const totalNetValueInReais = relevantPayments.reduce((sum, payment) => {
+      const netValue = parseFloat(payment.net_value as unknown as string);
+      return sum + (isNaN(netValue) ? 0 : netValue / 100);
+    }, 0);
 
     // Formatar o totalNetValue como moeda em Real (R$)
     const formattedTotalNetValue = new Intl.NumberFormat('pt-BR', {
@@ -34,7 +37,7 @@ export const getDashboardData = async (req: Request, res: Response): Promise<Res
       if (!acc[paymentDate]) {
         acc[paymentDate] = 0;
       }
-      acc[paymentDate] += netValueInReais;
+      acc[paymentDate] += isNaN(netValueInReais) ? 0 : netValueInReais;
       return acc;
     }, {});
 
@@ -50,7 +53,10 @@ export const getDashboardData = async (req: Request, res: Response): Promise<Res
 
     // Calcular o valor total das vendas de hoje
     const todaysPayments = relevantPayments.filter(payment => new Date(payment.payment_date).toISOString().split('T')[0] === todayString);
-    const todaysTotalNetValueInReais = todaysPayments.reduce((sum, payment) => sum + parseFloat(payment.net_value as unknown as string) / 100, 0);
+    const todaysTotalNetValueInReais = todaysPayments.reduce((sum, payment) => {
+      const netValue = parseFloat(payment.net_value as unknown as string);
+      return sum + (isNaN(netValue) ? 0 : netValue / 100);
+    }, 0);
     const formattedTodaysTotalNetValue = new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
