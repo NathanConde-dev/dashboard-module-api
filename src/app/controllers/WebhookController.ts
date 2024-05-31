@@ -37,9 +37,13 @@ export const webhookPagarme = async (req: Request, res: Response): Promise<Respo
       // Check if the payment exists by id_payment
       let payment = await paymentRepository.findOneBy({ id_payment: charge.id });
 
-      // If payment exists, update the payment status
+      // If payment exists, update the payment status and dates
       if (payment) {
         payment.status = charge.status;
+        payment.due_date = order ? order.due_date : null;
+        payment.original_due_date = order ? order.due_date : null;
+        payment.payment_date = charge.paid_at;
+        payment.client_payment_date = charge.paid_at;
       } else {
         // If payment does not exist, create a new payment
         payment = paymentRepository.create({
@@ -74,49 +78,53 @@ export const webhookPagarme = async (req: Request, res: Response): Promise<Respo
 
 // Webhook Asaas
 export const webhookAsaas = async (req: Request, res: Response): Promise<Response> => {
-    try {
-      const { event, payment } = req.body;
-      const { id, customer, value, netValue, description, billingType, status, dueDate, originalDueDate, paymentDate, clientPaymentDate, installmentNumber, invoiceUrl } = payment;
-  
-      const clientRepository = AppDataSource.getRepository(Client);
-      const paymentRepository = AppDataSource.getRepository(Payment);
-  
-      // Fetch customer details from Asaas API using the customer ID
-      const customerDetails = await axios.get(`https://www.asaas.com/api/v3/customers/${customer}`, {
-        headers: {
-          'access_token': process.env.ASAAS_ACCESS_TOKEN // Ensure the correct header is set
-        }
-      }).then(response => response.data)
-        .catch((error: any) => {
-          console.error('Error fetching customer details from Asaas:', error);
-          throw new Error('Error fetching customer details from Asaas');
-        });
-  
-      // Check if the client exists by email
-      let client = await clientRepository.findOneBy({ email: customerDetails.email });
-  
-      // If client does not exist, create a new client
-      if (!client) {
-        client = clientRepository.create({
-          name: customerDetails.name,
-          email: customerDetails.email,
-          cpf: customerDetails.cpfCnpj,
-          phone: customerDetails.phone || ''
-        });
-        await clientRepository.save(client);
+  try {
+    const { event, payment } = req.body;
+    const { id, customer, value, netValue, description, billingType, status, dueDate, originalDueDate, paymentDate, clientPaymentDate, installmentNumber, invoiceUrl } = payment;
+
+    const clientRepository = AppDataSource.getRepository(Client);
+    const paymentRepository = AppDataSource.getRepository(Payment);
+
+    // Fetch customer details from Asaas API using the customer ID
+    const customerDetails = await axios.get(`https://www.asaas.com/api/v3/customers/${customer}`, {
+      headers: {
+        'access_token': process.env.ASAAS_ACCESS_TOKEN // Ensure the correct header is set
       }
-  
-      const clientId = client.id;
-  
-      // Check if the payment exists by id_payment
-      let paymentRecord = await paymentRepository.findOneBy({ id_payment: id });
-  
-      // If payment exists, update the payment status
-      if (paymentRecord) {
-        paymentRecord.status = status;
-      } else {
-        // If payment does not exist, create a new payment
-        paymentRecord = paymentRepository.create({
+    }).then(response => response.data)
+      .catch((error: any) => {
+        console.error('Error fetching customer details from Asaas:', error);
+        throw new Error('Error fetching customer details from Asaas');
+      });
+
+    // Check if the client exists by email
+    let client = await clientRepository.findOneBy({ email: customerDetails.email });
+
+    // If client does not exist, create a new client
+    if (!client) {
+      client = clientRepository.create({
+        name: customerDetails.name,
+        email: customerDetails.email,
+        cpf: customerDetails.cpfCnpj,
+        phone: customerDetails.phone || ''
+      });
+      await clientRepository.save(client);
+    }
+
+    const clientId = client.id;
+
+    // Check if the payment exists by id_payment
+    let paymentRecord = await paymentRepository.findOneBy({ id_payment: id });
+
+    // If payment exists, update the payment status and dates
+    if (paymentRecord) {
+      paymentRecord.status = status;
+      paymentRecord.due_date = dueDate;
+      paymentRecord.original_due_date = originalDueDate;
+      paymentRecord.payment_date = paymentDate;
+      paymentRecord.client_payment_date = clientPaymentDate;
+    } else {
+      // If payment does not exist, create a new payment
+      paymentRecord = paymentRepository.create({
         id_payment: id,
         id_client: clientId,  // Use the correct field name here
         platform: 'Asaas',
