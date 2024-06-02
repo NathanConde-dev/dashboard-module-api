@@ -142,8 +142,8 @@ export const uploadClients = [
                     });
                 } else {
                     // Atualizar dados do cliente existente
-                    client.name = Nome;
-                    client.cpf = Identificador;
+                    client.name = Nome || client.name;
+                    client.cpf = Identificador || client.cpf;
                     client.phone = Telefone || client.phone;
                 }
 
