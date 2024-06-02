@@ -113,15 +113,20 @@ export const uploadClients = [
     async (req: Request, res: Response): Promise<Response> => {
         const file = (req as any).file;
         if (!file) {
+            console.error('No file uploaded.');
             return res.status(400).send({ message: 'Nenhum arquivo enviado.' });
         }
 
         try {
+            console.log('File uploaded:', file);
+
             // Ler a planilha
             const workbook = XLSX.readFile(file.path);
             const sheetName = workbook.SheetNames[0];
             const sheet = workbook.Sheets[sheetName];
             const rows = XLSX.utils.sheet_to_json(sheet);
+
+            console.log('Rows extracted from file:', rows);
 
             const clientRepository = AppDataSource.getRepository(Client);
 
