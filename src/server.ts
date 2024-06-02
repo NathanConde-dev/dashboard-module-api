@@ -16,7 +16,6 @@ app.use(express.json());
 //Definição da porta pelo Railway
 const PORT = process.env.PORT || 3010;
 
-
 AppDataSource.initialize().then(() => {
   
     console.log("Data Source has been initialized and cache cleared!");

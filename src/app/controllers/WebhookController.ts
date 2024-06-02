@@ -50,8 +50,8 @@ export const webhookPagarme = async (req: Request, res: Response): Promise<Respo
           id_client: clientId,  // Use the correct field name here
           platform: 'Pagarme',
           id_payment: charge.id,
-          value: charge.amount,
-          net_value: charge.amount, // Adjust if you have net value separately
+          value: charge.amount / 100, // Convertendo de centavos para reais
+          net_value: charge.amount / 100, // Convertendo de centavos para reais
           description: itemDescription,
           payment_method: charge.payment_method,
           status: charge.status,

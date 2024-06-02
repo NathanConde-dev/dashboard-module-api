@@ -76,8 +76,8 @@ export const fetchTransactions = async (req: Request, res: Response): Promise<vo
               id_client: client_id,
               id_payment: transaction.id.toString(),
               platform: 'Pagarme',
-              value: transaction.amount,
-              net_value: transaction.paid_amount,
+              value: transaction.amount / 100, // Convertendo de centavos para reais
+              net_value: transaction.paid_amount / 100, // Convertendo de centavos para reais
               description: transaction.items.map(item => item.title).join(', '),
               payment_method: transaction.payment_method,
               status: transaction.status,
