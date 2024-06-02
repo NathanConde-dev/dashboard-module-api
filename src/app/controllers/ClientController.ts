@@ -129,25 +129,29 @@ export const uploadClients = [
             for (const row of rows) {
                 const { Nome, Email, Identificador, Telefone } = row as any;
 
-                // Verificar se o cliente já existe pelo email
-                let client = await clientRepository.findOneBy({ email: Email });
+                try {
+                    // Verificar se o cliente já existe pelo email
+                    let client = await clientRepository.findOneBy({ email: Email });
 
-                if (!client) {
-                    // Criar novo cliente
-                    client = clientRepository.create({
-                        name: Nome,
-                        email: Email,
-                        cpf: Identificador,
-                        phone: Telefone || ''
-                    });
-                } else {
-                    // Atualizar dados do cliente existente
-                    client.name = Nome || client.name;
-                    client.cpf = Identificador || client.cpf;
-                    client.phone = Telefone || client.phone;
+                    if (!client) {
+                        // Criar novo cliente
+                        client = clientRepository.create({
+                            name: Nome,
+                            email: Email,
+                            cpf: Identificador,
+                            phone: Telefone || ''
+                        });
+                    } else {
+                        // Atualizar dados do cliente existente
+                        client.name = Nome || client.name;
+                        client.cpf = Identificador || client.cpf;
+                        client.phone = Telefone || client.phone;
+                    }
+
+                    await clientRepository.save(client);
+                } catch (innerError) {
+                    console.error(`Error processing client with email ${Email}:`, innerError);
                 }
-
-                await clientRepository.save(client);
             }
 
             return res.status(200).send({ message: 'Dados de clientes importados com sucesso.' });
