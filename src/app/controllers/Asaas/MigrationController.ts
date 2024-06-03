@@ -2,15 +2,18 @@
 import { Request, Response } from 'express';
 import { AppDataSource } from '../../../database/data-source';
 import { Client } from '../../entities/Clients';
-import { Payment } from '../../entities/Payments';
 import asaasApi from '../../services/Asaas/AsaasService';
 import { PaymentService } from '../../services/Asaas/PaymentService';
 
 // Função para buscar todos os customers a partir dos e-mails dos Clients
-export async function fetchAllCustomerIds(req: Request, res: Response): Promise<void> {
+export async function fetchAllCustomerIds(req: Request, res: Response): Promise<Response> {
     try {
         const clientRepository = AppDataSource.getRepository(Client);
         const clients = await clientRepository.find();
+
+        if (clients.length === 0) {
+            return res.status(404).send({ message: "Nenhum cliente encontrado." });
+        }
 
         const responses = await Promise.all(
             clients.map(client =>
@@ -35,10 +38,10 @@ export async function fetchAllCustomerIds(req: Request, res: Response): Promise<
                 customerId: response.customerId as string
             }));
 
-        res.json(filteredResponses);
+        return res.json(filteredResponses);
     } catch (error) {
         console.error('Error fetching all customer IDs:', error);
-        res.status(500).send('Internal Server Error');
+        return res.status(500).send('Internal Server Error');
     }
 }
 
@@ -65,6 +68,10 @@ export const migrationAsaas = async (req: Request, res: Response): Promise<Respo
     try {
         const clientRepository = AppDataSource.getRepository(Client);
         const clients = await clientRepository.find();
+
+        if (clients.length === 0) {
+            return res.status(404).send({ message: "Nenhum cliente encontrado." });
+        }
 
         // Passo 1: Buscar todos os customers a partir dos e-mails dos Clients
         const responses = await Promise.all(

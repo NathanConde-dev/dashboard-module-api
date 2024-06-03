@@ -39,7 +39,7 @@ export const fetchTransactions = async (req: Request, res: Response): Promise<vo
     const clients = await clientRepository.find();
 
     if (clients.length === 0) {
-      res.status(404).send('No clients found.');
+      res.status(404).send({ message: "Nenhum cliente encontrado." });
       return;
     }
 
